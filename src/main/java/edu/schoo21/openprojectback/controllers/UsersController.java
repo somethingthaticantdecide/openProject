@@ -9,25 +9,20 @@ import edu.schoo21.openprojectback.models.dto.UserDto;
 import edu.schoo21.openprojectback.services.CatsService;
 import edu.schoo21.openprojectback.services.FeedbackService;
 import edu.schoo21.openprojectback.services.UsersService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UsersController {
 
     private final UsersService usersService;
     private final FeedbackService feedbackService;
     private final CatsService catsService;
-
-    public UsersController(UsersService usersService, FeedbackService feedbackService, CatsService catsService) {
-        this.usersService = usersService;
-        this.feedbackService = feedbackService;
-        this.catsService = catsService;
-    }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
