@@ -5,7 +5,8 @@ import java.util.Objects;
 import edu.schoo21.openprojectback.config.JwtTokenUtil;
 import edu.schoo21.openprojectback.models.JwtRequest;
 import edu.schoo21.openprojectback.models.JwtResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.schoo21.openprojectback.models.dto.UserDto;
+import edu.schoo21.openprojectback.services.UsersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,36 +14,38 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
 public class JwtAuthenticationController {
 
-	@Autowired
-	private AuthenticationManager authenticationManager;
+	private final AuthenticationManager authenticationManager;
+	private final JwtTokenUtil jwtTokenUtil;
+	private final UserDetailsService jwtInMemoryUserDetailsService;
+	private final UsersService usersService;
 
-	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
-
-	@Autowired
-	private UserDetailsService jwtInMemoryUserDetailsService;
+	public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService jwtInMemoryUserDetailsService, UsersService usersService) {
+		this.authenticationManager = authenticationManager;
+		this.jwtTokenUtil = jwtTokenUtil;
+		this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
+		this.usersService = usersService;
+	}
 
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
-			throws Exception {
-
+	public ResponseEntity<?> authenticate(@RequestBody JwtRequest authenticationRequest) throws Exception {
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-
-		final UserDetails userDetails = jwtInMemoryUserDetailsService
-				.loadUserByUsername(authenticationRequest.getUsername());
-
+		final UserDetails userDetails = jwtInMemoryUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 		final String token = jwtTokenUtil.generateToken(userDetails);
+		return ResponseEntity.ok(new JwtResponse(token));
+	}
 
+	@RequestMapping(value = "/signUp", method = RequestMethod.POST)
+	public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDto userDto) {
+		if (usersService.findByName(userDto.getName()) == null)
+			usersService.addNewUser(userDto);
+		final UserDetails userDetails = jwtInMemoryUserDetailsService.loadUserByUsername(userDto.getName());
+		final String token = jwtTokenUtil.generateToken(userDetails);
 		return ResponseEntity.ok(new JwtResponse(token));
 	}
 
