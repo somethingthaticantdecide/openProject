@@ -4,12 +4,15 @@ import edu.schoo21.openprojectback.exceptions.NotFoundException;
 import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.models.dto.UserDto;
 import edu.schoo21.openprojectback.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UsersService {
+public class UsersService implements UserDetailsService {
     private final UserRepository userRepository;
 
     public UsersService(UserRepository userRepository) {
@@ -25,8 +28,12 @@ public class UsersService {
     }
 
     public User addNewUser(UserDto userDto) {
-        return userRepository.save(new User(userDto.getLogin(), userDto.getPassword(), userDto.getName(),
-                userDto.getPhoneNumber(), userDto.getMail(), userDto.getAddress(), userDto.getAvatar(), userDto.getRanking()));
+        User user = userRepository.findUserByLogin(userDto.getLogin());
+        if (user == null) {
+            user = new User(userDto);
+            userRepository.save(user);
+        }
+        return user;
     }
 
     public void save(User user) {
@@ -50,7 +57,13 @@ public class UsersService {
         userRepository.deleteById(id);
     }
 
-    public User findByName(String name) {
-        return userRepository.findUserByName(name);
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findUserByLogin(username);
+        if (user != null) {
+            return user;
+        } else {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
     }
 }
