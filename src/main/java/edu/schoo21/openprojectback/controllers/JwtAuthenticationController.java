@@ -5,6 +5,7 @@ import java.util.Objects;
 import edu.schoo21.openprojectback.config.JwtTokenUtil;
 import edu.schoo21.openprojectback.models.JwtRequest;
 import edu.schoo21.openprojectback.models.JwtResponse;
+import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.models.dto.UserDto;
 import edu.schoo21.openprojectback.services.UsersService;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,12 +26,14 @@ public class JwtAuthenticationController {
 	private final JwtTokenUtil jwtTokenUtil;
 	private final UserDetailsService jwtInMemoryUserDetailsService;
 	private final UsersService usersService;
+	private final PasswordEncoder passwordEncoder;
 
-	public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService jwtInMemoryUserDetailsService, UsersService usersService) {
+	public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService jwtInMemoryUserDetailsService, UsersService usersService, PasswordEncoder passwordEncoder) {
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenUtil = jwtTokenUtil;
 		this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
 		this.usersService = usersService;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
@@ -42,10 +46,9 @@ public class JwtAuthenticationController {
 
 	@RequestMapping(value = "/signUp", method = RequestMethod.POST)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDto userDto) {
-		if (usersService.findByName(userDto.getName()) == null)
-			usersService.addNewUser(userDto);
-		final UserDetails userDetails = jwtInMemoryUserDetailsService.loadUserByUsername(userDto.getName());
-		final String token = jwtTokenUtil.generateToken(userDetails);
+		userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+		User user = usersService.addNewUser(userDto);
+		final String token = jwtTokenUtil.generateToken(user);
 		return ResponseEntity.ok(new JwtResponse(token));
 	}
 

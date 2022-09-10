@@ -1,8 +1,12 @@
 package edu.schoo21.openprojectback.models;
 
+import edu.schoo21.openprojectback.models.dto.UserDto;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -12,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "usr")
 @Entity
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -25,6 +29,10 @@ public class User {
     private String address;
     private String avatar;
     private Float ranking;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+    private boolean enabled;
     @OneToMany
     @ToString.Exclude
     private List<Feedback> feedbacks;
@@ -47,5 +55,49 @@ public class User {
         this.address = address;
         this.avatar = avatar;
         this.ranking = ranking;
+    }
+
+    public User(UserDto userDto) {
+        this.login = userDto.getLogin();
+        this.password = userDto.getPassword();
+        this.name = userDto.getName();
+        this.phoneNumber = userDto.getPhoneNumber();
+        this.mail = userDto.getMail();
+        this.address = userDto.getAddress();
+        this.ranking = userDto.getRanking();
+        this.accountNonExpired = true;
+        this.accountNonLocked = true;
+        this.credentialsNonExpired = true;
+        this.enabled = true;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.login;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
     }
 }
