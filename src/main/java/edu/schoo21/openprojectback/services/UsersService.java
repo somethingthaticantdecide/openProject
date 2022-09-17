@@ -27,6 +27,10 @@ public class UsersService implements UserDetailsService {
         return userRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
+    public User findByLogin(String name) {
+        return userRepository.findUserByLogin(name);
+    }
+
     public User addNewUser(UserDto userDto) {
         User user = userRepository.findUserByLogin(userDto.getLogin());
         if (user == null) {

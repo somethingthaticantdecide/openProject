@@ -11,6 +11,7 @@ import edu.schoo21.openprojectback.services.FeedbackService;
 import edu.schoo21.openprojectback.services.UsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -40,6 +41,15 @@ public class UsersController {
     @ResponseStatus(HttpStatus.OK)
     public User getUser(@PathVariable("user-id") String id) {
         return usersService.findById(Long.valueOf(id));
+    }
+
+    @GetMapping("/info")
+    @ResponseStatus(HttpStatus.OK)
+    public User getInfo(Authentication authentication) {
+        if (authentication != null) {
+            return usersService.findByLogin(authentication.getName());
+        }
+        return null;
     }
 
     @PutMapping("/{user-id}")
