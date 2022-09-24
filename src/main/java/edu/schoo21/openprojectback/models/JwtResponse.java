@@ -22,6 +22,7 @@ public class JwtResponse {
 
 	public JwtResponse(String jwttoken, User user) {
 		this.jwttoken = jwttoken;
+		this.id = user.getId();
 		this.login = user.getLogin();
 		this.name = user.getName();
 		this.phoneNumber = user.getPhoneNumber();
