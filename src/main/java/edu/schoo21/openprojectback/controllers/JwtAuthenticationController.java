@@ -13,8 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,14 +22,13 @@ public class JwtAuthenticationController {
 
 	private final AuthenticationManager authenticationManager;
 	private final JwtTokenUtil jwtTokenUtil;
-	private final UserDetailsService jwtInMemoryUserDetailsService;
 	private final UsersService usersService;
 	private final PasswordEncoder passwordEncoder;
 
-	public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService jwtInMemoryUserDetailsService, UsersService usersService, PasswordEncoder passwordEncoder) {
+	public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
+									   UsersService usersService, PasswordEncoder passwordEncoder) {
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenUtil = jwtTokenUtil;
-		this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
 		this.usersService = usersService;
 		this.passwordEncoder = passwordEncoder;
 	}
@@ -39,9 +36,10 @@ public class JwtAuthenticationController {
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public ResponseEntity<?> authenticate(@RequestBody JwtRequest authenticationRequest) throws Exception {
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-		final UserDetails userDetails = jwtInMemoryUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-		final String token = jwtTokenUtil.generateToken(userDetails);
-		return ResponseEntity.ok(new JwtResponse(token));
+		User user = usersService.findByLogin(authenticationRequest.getUsername());
+		final String token = jwtTokenUtil.generateToken(user);
+		return ResponseEntity.ok(new JwtResponse(token, user.getLogin(), user.getName(), user.getPhoneNumber(),
+				user.getMail(), user.getAddress(), user.getAvatar(), user.getRanking()));
 	}
 
 	@RequestMapping(value = "/signUp", method = RequestMethod.POST)
@@ -49,7 +47,8 @@ public class JwtAuthenticationController {
 		userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 		User user = usersService.addNewUser(userDto);
 		final String token = jwtTokenUtil.generateToken(user);
-		return ResponseEntity.ok(new JwtResponse(token));
+		return ResponseEntity.ok(new JwtResponse(token, user.getLogin(), user.getName(), user.getPhoneNumber(),
+				user.getMail(), user.getAddress(), user.getAvatar(), user.getRanking()));
 	}
 
 	private void authenticate(String username, String password) throws Exception {
