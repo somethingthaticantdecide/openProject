@@ -6,23 +6,11 @@ import lombok.Data;
 public class JwtResponse {
 
 	private final String jwttoken;
-	private String login;
-	private String name;
-	private Long phoneNumber;
-	private String mail;
-	private String address;
-	private String avatar;
-	private Float ranking;
+	private final User user;
 
-	public JwtResponse(String jwttoken, String login, String name, Long phoneNumber, String mail, String address, String avatar, Float ranking) {
+	public JwtResponse(String jwttoken, User user) {
 		this.jwttoken = jwttoken;
-		this.login = login;
-		this.name = name;
-		this.phoneNumber = phoneNumber;
-		this.mail = mail;
-		this.address = address;
-		this.avatar = avatar;
-		this.ranking = ranking;
+		this.user = user;
 	}
 
 }

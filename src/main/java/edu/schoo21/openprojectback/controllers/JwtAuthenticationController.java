@@ -38,8 +38,7 @@ public class JwtAuthenticationController {
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 		User user = usersService.findByLogin(authenticationRequest.getUsername());
 		final String token = jwtTokenUtil.generateToken(user);
-		return ResponseEntity.ok(new JwtResponse(token, user.getLogin(), user.getName(), user.getPhoneNumber(),
-				user.getMail(), user.getAddress(), user.getAvatar(), user.getRanking()));
+		return ResponseEntity.ok(new JwtResponse(token, user));
 	}
 
 	@RequestMapping(value = "/signUp", method = RequestMethod.POST)
@@ -47,8 +46,7 @@ public class JwtAuthenticationController {
 		userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 		User user = usersService.addNewUser(userDto);
 		final String token = jwtTokenUtil.generateToken(user);
-		return ResponseEntity.ok(new JwtResponse(token, user.getLogin(), user.getName(), user.getPhoneNumber(),
-				user.getMail(), user.getAddress(), user.getAvatar(), user.getRanking()));
+		return ResponseEntity.ok(new JwtResponse(token, user));
 	}
 
 	private void authenticate(String username, String password) throws Exception {
