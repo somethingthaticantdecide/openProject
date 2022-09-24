@@ -18,7 +18,6 @@ public class JwtResponse {
 	private List<Feedback> feedbacks;
 	private List<Cat> cats;
 	private List<Cat> favorites;
-	private List<Chat> chats;
 
 	public JwtResponse(String jwttoken, User user) {
 		this.jwttoken = jwttoken;
@@ -33,7 +32,6 @@ public class JwtResponse {
 		this.feedbacks = user.getFeedbacks();
 		this.cats = user.getCats();
 		this.favorites = user.getFavorites();
-		this.chats = user.getChats();
 	}
 
 }
