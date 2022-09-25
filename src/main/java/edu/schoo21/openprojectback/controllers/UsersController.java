@@ -75,7 +75,7 @@ public class UsersController {
     @PostMapping("/{user-id}/feedbacks")
     @ResponseStatus(HttpStatus.CREATED)
     public Feedback addFeedbackToUser(@RequestBody FeedbackDto feedbackDto, @PathVariable("user-id") String userId) {
-        Feedback feedback = new Feedback(usersService.findById(Long.valueOf(feedbackDto.getUserId())), feedbackDto.getDate(), feedbackDto.getText());
+        Feedback feedback = new Feedback(Long.valueOf(feedbackDto.getUserId()), feedbackDto.getDate(), feedbackDto.getText());
         feedbackService.save(feedback);
 
         User user = usersService.findById(Long.valueOf(userId));
@@ -88,7 +88,7 @@ public class UsersController {
     @ResponseStatus(HttpStatus.OK)
     public User updateFeedbackToUser(@RequestBody FeedbackDto feedbackDto, @PathVariable("user-id") String userId, @PathVariable("feedback-id") String feedbackId) {
         Feedback feedback = feedbackService.findById(Long.valueOf(feedbackId));
-        feedback.setUser(usersService.findById(Long.valueOf(feedbackDto.getUserId())));
+        feedback.setUser_id(Long.valueOf(feedbackDto.getUserId()));
         feedback.setDate(feedbackDto.getDate());
         feedback.setText(feedbackDto.getText());
         feedbackService.save(feedback);

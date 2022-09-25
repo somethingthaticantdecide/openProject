@@ -2,7 +2,6 @@ package edu.schoo21.openprojectback.services;
 
 import edu.schoo21.openprojectback.exceptions.NotFoundException;
 import edu.schoo21.openprojectback.models.Feedback;
-import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.models.dto.FeedbackDto;
 import edu.schoo21.openprojectback.repository.FeedbackRepository;
 import edu.schoo21.openprojectback.repository.UserRepository;
@@ -34,17 +33,19 @@ public class FeedbackService {
 
     public Feedback update(FeedbackDto feedbackDto, String id) {
         Feedback feedback = feedbackRepository.findById(Long.valueOf(id)).orElseThrow(NotFoundException::new);
-        User user = userRepository.findById(Long.valueOf(feedbackDto.getUserId())).orElseThrow(NotFoundException::new);
-        feedback.setUser(user);
+        Long userId = Long.valueOf(feedbackDto.getUserId());
+        userRepository.findById(userId).orElseThrow(NotFoundException::new);
+        feedback.setUser_id(userId);
         feedback.setDate(feedbackDto.getDate());
         feedback.setText(feedbackDto.getText());
         return feedbackRepository.saveAndFlush(feedback);
     }
 
     public Feedback addNew(FeedbackDto feedbackDto) {
-        User user = userRepository.findById(Long.valueOf(feedbackDto.getUserId())).orElseThrow(NotFoundException::new);
+        Long userId = Long.valueOf(feedbackDto.getUserId());
+        userRepository.findById(userId).orElseThrow(NotFoundException::new);
         Feedback feedback = new Feedback();
-        feedback.setUser(user);
+        feedback.setUser_id(userId);
         feedback.setDate(feedbackDto.getDate());
         feedback.setText(feedbackDto.getText());
         return feedbackRepository.saveAndFlush(feedback);
