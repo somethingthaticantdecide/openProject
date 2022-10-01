@@ -1,20 +1,14 @@
 package edu.schoo21.openprojectback.controllers;
 
 import edu.schoo21.openprojectback.models.Cat;
-import edu.schoo21.openprojectback.models.Feedback;
-import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.models.dto.CatDto;
-import edu.schoo21.openprojectback.models.dto.FeedbackDto;
-import edu.schoo21.openprojectback.models.dto.UserDto;
 import edu.schoo21.openprojectback.services.CatsService;
-import edu.schoo21.openprojectback.services.FeedbackService;
-import edu.schoo21.openprojectback.services.UsersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Objects;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/cats")
 public class CatController {
