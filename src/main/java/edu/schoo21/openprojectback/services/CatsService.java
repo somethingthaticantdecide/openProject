@@ -31,8 +31,8 @@ public class CatsService {
 
     public Cat addNewCat(CatDto catDto) {
         return catRepository.save(new Cat(catDto.getName(), catDto.getSex(), catDto.getBreed(),
-            catDto.getAge(), catDto.getPrice(), catDto.getPassport(), catDto.getVaccination(),
-            catDto.getCertificates(), catDto.getInfo(), catDto.getPhoto()));
+                catDto.getAge(), catDto.getPrice(), catDto.getPassport(), catDto.getVaccination(),
+                catDto.getCertificates(), catDto.getInfo(), catDto.getPhoto()));
     }
 
     public Cat update(CatDto catDto, String id) {
