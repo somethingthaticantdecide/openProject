@@ -7,6 +7,7 @@ import edu.schoo21.openprojectback.models.dto.CatDto;
 import edu.schoo21.openprojectback.models.dto.FeedbackDto;
 import edu.schoo21.openprojectback.models.dto.UserDto;
 import edu.schoo21.openprojectback.requests.IdRequest;
+import edu.schoo21.openprojectback.requests.RankRequest;
 import edu.schoo21.openprojectback.services.CatsService;
 import edu.schoo21.openprojectback.services.FeedbackService;
 import edu.schoo21.openprojectback.services.UsersService;
@@ -56,14 +57,23 @@ public class UsersController {
 
     @PutMapping("/{user-id}")
     @ResponseStatus(HttpStatus.OK)
-    public User updateUser(@RequestBody UserDto userDto, @PathVariable("user-id") String id) {
+    public User updateUser(@RequestBody UserDto userDto, @PathVariable("user-id") Long id) {
         return usersService.updateUser(userDto, id);
     }
 
     @DeleteMapping("/{user-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable("user-id") String id) {
-        usersService.deleteById(Long.valueOf(id));
+    public void deleteUser(@PathVariable("user-id") Long id) {
+        usersService.deleteById(id);
+    }
+
+    @DeleteMapping("/{user-id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addRanking(@RequestBody RankRequest rank, @PathVariable("user-id") Long id) {
+        User user = usersService.findById(id);
+        user.getRankings().add(rank.getRank());
+        user.setRanking((float) user.getRankings().stream().mapToInt(r -> r).average().orElse(0));
+        usersService.deleteById(id);
     }
 
     /////////////////////////
@@ -127,16 +137,6 @@ public class UsersController {
         return cat;
     }
 
-//    @PostMapping("/{user-id}/cats")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public Cat addCatByIdToUser(@RequestBody IdRequest request, @PathVariable("user-id") String userId) {
-//        Cat cat = catsService.findById(request.getId());
-//        User user = usersService.findById(Long.valueOf(userId));
-//        user.getCats().add(cat);
-//        usersService.save(user);
-//        return cat;
-//    }
-
     @PutMapping("/{user-id}/cats/{cat-id}")
     @ResponseStatus(HttpStatus.OK)
     public User updateCatsToUser(@RequestBody CatDto catDto, @PathVariable("user-id") String userId, @PathVariable("cat-id") String catId) {
@@ -164,26 +164,14 @@ public class UsersController {
 
     @PostMapping("/{user-id}/favourites")
     @ResponseStatus(HttpStatus.CREATED)
-    public Cat addFavouritesCatToUser(@RequestBody CatDto catDto, @PathVariable("user-id") Long userId) {
+    public Cat addFavouritesCatByIdToUser(@RequestBody IdRequest idRequest, @PathVariable("user-id") Long userId) {
         User user = usersService.findById(userId);
-        Cat cat = new Cat(catDto, user);
-        catsService.save(cat);
+        Cat cat = catsService.findById(idRequest.getId());
 
         user.getFavorites().add(cat);
         usersService.save(user);
         return cat;
     }
-
-//    @PostMapping("/{user-id}/favourites")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public Cat addFavouritesCatByIdToUser(@RequestBody IdRequest idRequest, @PathVariable("user-id") Long userId) {
-//        User user = usersService.findById(userId);
-//        Cat cat = catsService.findById(idRequest.getId());
-//
-//        user.getFavorites().add(cat);
-//        usersService.save(user);
-//        return cat;
-//    }
 
     @PutMapping("/{user-id}/favourites/{cat-id}")
     @ResponseStatus(HttpStatus.OK)

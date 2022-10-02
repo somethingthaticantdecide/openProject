@@ -44,16 +44,16 @@ public class UsersService implements UserDetailsService {
         userRepository.saveAndFlush(user);
     }
 
-    public User updateUser(UserDto userDto, String userId) {
-        User user = userRepository.findById(Long.parseLong(userId)).orElseThrow(NotFoundException::new);
-        user.setLogin(userDto.getLogin());
-        user.setPassword(userDto.getPassword());
-        user.setName(userDto.getName());
-        user.setPhoneNumber(userDto.getPhoneNumber());
-        user.setMail(userDto.getMail());
-        user.setAddress(userDto.getAddress());
-        user.setAvatar(userDto.getAvatar());
-        user.setRanking(userDto.getRanking());
+    public User updateUser(UserDto userDto, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(NotFoundException::new);
+        if (userDto.getLogin() != null) user.setLogin(userDto.getLogin());
+        if (userDto.getPassword() != null) user.setPassword(userDto.getPassword());
+        if (userDto.getName() != null) user.setName(userDto.getName());
+        if (userDto.getPhoneNumber() != null) user.setPhoneNumber(userDto.getPhoneNumber());
+        if (userDto.getMail() != null) user.setMail(userDto.getMail());
+        if (userDto.getAddress() != null) user.setAddress(userDto.getAddress());
+        if (userDto.getAvatar() != null) user.setAvatar(userDto.getAvatar());
+        if (userDto.getRanking() != null) user.setRanking(userDto.getRanking());
         return userRepository.saveAndFlush(user);
     }
 

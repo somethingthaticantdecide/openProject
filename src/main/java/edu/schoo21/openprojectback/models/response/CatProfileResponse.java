@@ -36,12 +36,14 @@ public class CatProfileResponse {
         this.certificates = cat.getCertificates();
         this.info = cat.getInfo();
         this.photo = cat.getPhoto();
-        User owner = cat.getOwner();
-        this.owner_id = owner.getId();
-        this.owner_phoneNumber =  owner.getPhoneNumber();
-        this.owner_mail = owner.getMail();
-        this.owner_avatar = owner.getAvatar();
-        this.owner_ranking = owner.getRanking();
-        this.owner_address = owner.getAddress();
+        if (cat.getOwner() != null) {
+            User owner = cat.getOwner();
+            this.owner_id = owner.getId();
+            this.owner_phoneNumber =  owner.getPhoneNumber();
+            this.owner_mail = owner.getMail();
+            this.owner_avatar = owner.getAvatar();
+            this.owner_ranking = owner.getRanking();
+            this.owner_address = owner.getAddress();
+        }
     }
 }
