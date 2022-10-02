@@ -2,11 +2,14 @@ package edu.schoo21.openprojectback.controllers;
 
 import edu.schoo21.openprojectback.models.Cat;
 import edu.schoo21.openprojectback.models.dto.CatDto;
+import edu.schoo21.openprojectback.models.response.CatProfileResponse;
 import edu.schoo21.openprojectback.services.CatsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -21,8 +24,8 @@ public class CatController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Cat> getAllCats() {
-        return catsService.findAll();
+    public Collection<CatProfileResponse> getAllCats() {
+        return catsService.findAll().stream().map(CatProfileResponse::new).collect(Collectors.toCollection(ArrayList::new));
     }
 
     @PostMapping()
@@ -33,8 +36,8 @@ public class CatController {
 
     @GetMapping("/{cat-id}")
     @ResponseStatus(HttpStatus.OK)
-    public Cat getCat(@PathVariable("cat-id") String id) {
-        return catsService.findById(Long.valueOf(id));
+    public CatProfileResponse getCat(@PathVariable("cat-id") Long id) {
+        return new CatProfileResponse(catsService.findById(id));
     }
 
     @PutMapping("/{cat-id}")

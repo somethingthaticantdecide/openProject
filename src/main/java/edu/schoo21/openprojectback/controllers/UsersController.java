@@ -6,6 +6,7 @@ import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.models.dto.CatDto;
 import edu.schoo21.openprojectback.models.dto.FeedbackDto;
 import edu.schoo21.openprojectback.models.dto.UserDto;
+import edu.schoo21.openprojectback.requests.IdRequest;
 import edu.schoo21.openprojectback.services.CatsService;
 import edu.schoo21.openprojectback.services.FeedbackService;
 import edu.schoo21.openprojectback.services.UsersService;
@@ -116,15 +117,25 @@ public class UsersController {
 
     @PostMapping("/{user-id}/cats")
     @ResponseStatus(HttpStatus.CREATED)
-    public Cat addCatsToUser(@RequestBody CatDto catDto, @PathVariable("user-id") String userId) {
-        Cat cat = new Cat(catDto);
+    public Cat addCatsToUser(@RequestBody CatDto catDto, @PathVariable("user-id") Long userId) {
+        User user = usersService.findById(userId);
+        Cat cat = new Cat(catDto, user);
         catsService.save(cat);
 
-        User user = usersService.findById(Long.valueOf(userId));
         user.getCats().add(cat);
         usersService.save(user);
         return cat;
     }
+
+//    @PostMapping("/{user-id}/cats")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public Cat addCatByIdToUser(@RequestBody IdRequest request, @PathVariable("user-id") String userId) {
+//        Cat cat = catsService.findById(request.getId());
+//        User user = usersService.findById(Long.valueOf(userId));
+//        user.getCats().add(cat);
+//        usersService.save(user);
+//        return cat;
+//    }
 
     @PutMapping("/{user-id}/cats/{cat-id}")
     @ResponseStatus(HttpStatus.OK)
@@ -153,15 +164,26 @@ public class UsersController {
 
     @PostMapping("/{user-id}/favourites")
     @ResponseStatus(HttpStatus.CREATED)
-    public Cat addFavouritesCatToUser(@RequestBody CatDto catDto, @PathVariable("user-id") String userId) {
-        Cat cat = new Cat(catDto);
+    public Cat addFavouritesCatToUser(@RequestBody CatDto catDto, @PathVariable("user-id") Long userId) {
+        User user = usersService.findById(userId);
+        Cat cat = new Cat(catDto, user);
         catsService.save(cat);
 
-        User user = usersService.findById(Long.valueOf(userId));
         user.getFavorites().add(cat);
         usersService.save(user);
         return cat;
     }
+
+//    @PostMapping("/{user-id}/favourites")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public Cat addFavouritesCatByIdToUser(@RequestBody IdRequest idRequest, @PathVariable("user-id") Long userId) {
+//        User user = usersService.findById(userId);
+//        Cat cat = catsService.findById(idRequest.getId());
+//
+//        user.getFavorites().add(cat);
+//        usersService.save(user);
+//        return cat;
+//    }
 
     @PutMapping("/{user-id}/favourites/{cat-id}")
     @ResponseStatus(HttpStatus.OK)

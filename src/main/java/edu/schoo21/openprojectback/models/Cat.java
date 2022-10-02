@@ -1,5 +1,6 @@
 package edu.schoo21.openprojectback.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.schoo21.openprojectback.models.dto.CatDto;
 import lombok.*;
 
@@ -26,8 +27,12 @@ public class Cat {
     private Boolean certificates;
     private String info;
     private String photo;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    @JsonIgnore
+    private User owner;
 
-    public Cat(CatDto catDto) {
+    public Cat(CatDto catDto, User owner) {
         this.name = catDto.getName();
         this.sex = catDto.getSex();
         this.breed = catDto.getBreed();
@@ -38,6 +43,7 @@ public class Cat {
         this.certificates = catDto.getCertificates();
         this.info = catDto.getInfo();
         this.photo = catDto.getPhoto();
+        this.owner = owner;
     }
 
     public Cat(String name, Boolean sex, String breed, Integer age, Integer price, Boolean passport, Boolean vaccination, Boolean certificates, String info, String photo) {
