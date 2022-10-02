@@ -67,7 +67,7 @@ public class UsersController {
         usersService.deleteById(id);
     }
 
-    @PostMapping("/{user-id}")
+    @PostMapping("/{user-id}/rank")
     @ResponseStatus(HttpStatus.OK)
     public void addRanking(@RequestBody RankRequest rank, @PathVariable("user-id") Long id) {
         User user = usersService.findById(id);
