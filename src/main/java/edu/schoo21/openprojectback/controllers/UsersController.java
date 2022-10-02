@@ -67,13 +67,13 @@ public class UsersController {
         usersService.deleteById(id);
     }
 
-    @DeleteMapping("/{user-id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping("/{user-id}/rank")
+    @ResponseStatus(HttpStatus.OK)
     public void addRanking(@RequestBody RankRequest rank, @PathVariable("user-id") Long id) {
         User user = usersService.findById(id);
         user.getRankings().add(rank.getRank());
         user.setRanking((float) user.getRankings().stream().mapToInt(r -> r).average().orElse(0));
-        usersService.deleteById(id);
+        usersService.save(user);
     }
 
     /////////////////////////
