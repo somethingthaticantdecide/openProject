@@ -70,4 +70,8 @@ public class UsersService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
     }
+
+    public User findUserByLogin(String login) {
+        return userRepository.findUserByLogin(login);
+    }
 }

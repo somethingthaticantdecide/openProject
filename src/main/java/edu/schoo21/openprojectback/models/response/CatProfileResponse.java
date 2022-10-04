@@ -23,6 +23,7 @@ public class CatProfileResponse {
     private String owner_address;
     private String owner_avatar;
     private Float owner_ranking;
+    private String owner_name;
 
     public CatProfileResponse(Cat cat) {
         this.id = cat.getId();
@@ -40,6 +41,7 @@ public class CatProfileResponse {
             User owner = cat.getOwner();
             this.owner_id = owner.getId();
             this.owner_phoneNumber =  owner.getPhoneNumber();
+            this.owner_name = owner.getName();
             this.owner_mail = owner.getMail();
             this.owner_avatar = owner.getAvatar();
             this.owner_ranking = owner.getRanking();

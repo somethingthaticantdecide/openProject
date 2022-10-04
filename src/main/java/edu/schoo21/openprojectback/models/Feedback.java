@@ -19,10 +19,16 @@ public class Feedback {
     private Long user_id;
     private Date date;
     private String text;
+    private String name;
+    private String avatar;
+    private Float rating;
 
-    public Feedback(Long user_id, Date date, String text) {
+    public Feedback(Long user_id, Date date, String text, String name, String avatar, Float rating) {
         this.user_id = user_id;
         this.date = date;
         this.text = text;
+        this.name = name;
+        this.avatar = avatar;
+        this.rating = rating;
     }
 }

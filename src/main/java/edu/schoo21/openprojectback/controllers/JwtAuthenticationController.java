@@ -43,6 +43,8 @@ public class JwtAuthenticationController {
 
 	@RequestMapping(value = "/signUp", method = RequestMethod.POST)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDto userDto) {
+		if (usersService.findUserByLogin(userDto.getLogin()) != null)
+			return ResponseEntity.badRequest().build();
 		userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 		User user = usersService.addNewUser(userDto);
 		final String token = jwtTokenUtil.generateToken(user);

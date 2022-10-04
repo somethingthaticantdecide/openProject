@@ -35,8 +35,8 @@ public class CatsService {
                 catDto.getCertificates(), catDto.getInfo(), catDto.getPhoto()));
     }
 
-    public Cat update(CatDto catDto, String id) {
-        Cat cat = catRepository.findById(Long.parseLong(id)).orElseThrow(NotFoundException::new);
+    public Cat update(CatDto catDto, Long id) {
+        Cat cat = catRepository.findById(id).orElseThrow(NotFoundException::new);
         cat.setName(catDto.getName());
         cat.setSex(catDto.getSex());
         cat.setBreed(catDto.getBreed());

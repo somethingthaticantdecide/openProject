@@ -42,7 +42,7 @@ public class CatController {
 
     @PutMapping("/{cat-id}")
     @ResponseStatus(HttpStatus.OK)
-    public Cat updateCat(@RequestBody CatDto catDto, @PathVariable("cat-id") String id) {
+    public Cat updateCat(@RequestBody CatDto catDto, @PathVariable("cat-id") Long id) {
         return catsService.update(catDto, id);
     }
 
