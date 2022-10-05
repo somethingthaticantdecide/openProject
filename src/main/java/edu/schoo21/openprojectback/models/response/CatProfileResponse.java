@@ -21,7 +21,7 @@ public class CatProfileResponse {
     private Long owner_phoneNumber;
     private String owner_mail;
     private String owner_address;
-    private String owner_avatar;
+//    private String owner_avatar;
     private Float owner_ranking;
     private String owner_name;
     private Integer count_feedback;
@@ -44,7 +44,7 @@ public class CatProfileResponse {
             this.owner_phoneNumber =  owner.getPhoneNumber();
             this.owner_name = owner.getName();
             this.owner_mail = owner.getMail();
-            this.owner_avatar = owner.getAvatar();
+//            this.owner_avatar = owner.getAvatar();
             this.owner_ranking = owner.getRanking();
             this.owner_address = owner.getAddress();
             this.count_feedback = owner.getFeedbacks().size();

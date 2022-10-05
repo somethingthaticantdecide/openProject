@@ -76,7 +76,7 @@ public class UsersController {
         usersService.deleteById(id);
     }
 
-    @PostMapping(value = "/{user-id}/poster", consumes = "multipart/form-data")
+    @PostMapping(value = "/{user-id}/avatar", consumes = "multipart/form-data")
     public ResponseEntity<?> addFilm(@RequestParam("file") MultipartFile file, @PathVariable("user-id") Long id) throws IOException {
         User user = usersService.findById(id);
         if (null != user) {
@@ -104,7 +104,7 @@ public class UsersController {
     public Feedback addFeedbackToUser(@RequestBody FeedbackDto feedbackDto, @PathVariable("user-id") Long userId) {
         User user = usersService.findById(userId);
         Feedback feedback = new Feedback(feedbackDto.getUserId(), feedbackDto.getDate(), feedbackDto.getText(),
-                user.getName(), user.getAvatar(), feedbackDto.getRating());
+                user.getName(), feedbackDto.getRating());
         feedbackService.save(feedback);
         user.getFeedbacks().add(feedback);
         usersService.countRanking(user);
