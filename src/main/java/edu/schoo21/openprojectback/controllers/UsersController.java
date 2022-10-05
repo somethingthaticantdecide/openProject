@@ -1,5 +1,6 @@
 package edu.schoo21.openprojectback.controllers;
 
+import edu.schoo21.openprojectback.models.Avatar;
 import edu.schoo21.openprojectback.models.Cat;
 import edu.schoo21.openprojectback.models.Feedback;
 import edu.schoo21.openprojectback.models.User;
@@ -7,11 +8,13 @@ import edu.schoo21.openprojectback.models.dto.CatDto;
 import edu.schoo21.openprojectback.models.dto.FeedbackDto;
 import edu.schoo21.openprojectback.models.dto.UserDto;
 import edu.schoo21.openprojectback.requests.IdRequest;
+import edu.schoo21.openprojectback.services.AvatarService;
 import edu.schoo21.openprojectback.services.CatsService;
 import edu.schoo21.openprojectback.services.FeedbackService;
 import edu.schoo21.openprojectback.services.UsersService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +22,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.Objects;
 
 @CrossOrigin
 @RestController
@@ -31,9 +33,13 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UsersController {
 
+    @Value("${server.port}")
+    private String serverPort;
+
     private final UsersService usersService;
     private final FeedbackService feedbackService;
     private final CatsService catsService;
+    private final AvatarService avatarService;
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
@@ -78,17 +84,17 @@ public class UsersController {
 
     @PostMapping(value = "/{user-id}/avatar", consumes = "multipart/form-data")
     public ResponseEntity<?> addFilm(@RequestParam("file") MultipartFile file, @PathVariable("user-id") Long id) throws IOException {
+        Avatar avatar = avatarService.findById(id);
         User user = usersService.findById(id);
-        if (null != user) {
-            if (file.getSize() > 0) {
-                user.setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));
-//            } else {
-//                String filename = Objects.requireNonNull(getClass().getClassLoader().getResource("/images/poster-holder.jpg")).getFile();
-//                user.setAvatar(Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(new File(filename))));
-            }
+        InetAddress ip = InetAddress.getLocalHost();
+        if (avatar != null && user != null && file.getSize() > 0) {
+            avatar.setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));
+            avatarService.save(avatar);
+            user.setAvatar(ip.getHostAddress() + ":" + serverPort + "/avatars/" + id);
             usersService.save(user);
+            return ResponseEntity.ok().build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.badRequest().build();
     }
 
     /////////////////////////
