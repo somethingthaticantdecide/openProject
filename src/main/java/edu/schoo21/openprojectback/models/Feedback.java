@@ -21,14 +21,14 @@ public class Feedback {
     private String text;
     private String name;
     private String avatar;
-    private Float rating;
+    private Integer rating;
 
-    public Feedback(Long user_id, Date date, String text, String name, String avatar, Float rating) {
+    public Feedback(Long user_id, Date date, String text, String name, String avatar, Integer rating) {
         this.user_id = user_id;
         this.date = date;
         this.text = text;
         this.name = name;
         this.avatar = avatar;
-        this.rating = rating;
+        this.rating = rating != null ? rating : Integer.valueOf(1);
     }
 }

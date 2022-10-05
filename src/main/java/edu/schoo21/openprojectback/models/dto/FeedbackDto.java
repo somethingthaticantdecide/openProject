@@ -8,4 +8,5 @@ public class FeedbackDto {
     private Long userId;
     private Date date;
     private String text;
+    private Integer rating;
 }

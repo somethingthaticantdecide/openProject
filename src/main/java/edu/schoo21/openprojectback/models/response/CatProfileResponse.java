@@ -24,6 +24,7 @@ public class CatProfileResponse {
     private String owner_avatar;
     private Float owner_ranking;
     private String owner_name;
+    private Integer count_feedback;
 
     public CatProfileResponse(Cat cat) {
         this.id = cat.getId();
@@ -46,6 +47,7 @@ public class CatProfileResponse {
             this.owner_avatar = owner.getAvatar();
             this.owner_ranking = owner.getRanking();
             this.owner_address = owner.getAddress();
+            this.count_feedback = owner.getFeedbacks().size();
         }
     }
 }

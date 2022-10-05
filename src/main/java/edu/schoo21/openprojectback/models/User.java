@@ -42,8 +42,6 @@ public class User implements UserDetails {
     @OneToMany
     @ToString.Exclude
     private List<Cat> favorites;
-    @ElementCollection
-    private List<Integer> rankings;
 
     public User(String login, String password, String name, Long phoneNumber, String mail, String address, String avatar, Float ranking) {
         this.login = login;

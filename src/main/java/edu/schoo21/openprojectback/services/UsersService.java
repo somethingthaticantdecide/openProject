@@ -1,6 +1,7 @@
 package edu.schoo21.openprojectback.services;
 
 import edu.schoo21.openprojectback.exceptions.NotFoundException;
+import edu.schoo21.openprojectback.models.Feedback;
 import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.models.dto.UserDto;
 import edu.schoo21.openprojectback.repository.UserRepository;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -74,4 +76,23 @@ public class UsersService implements UserDetailsService {
     public User findUserByLogin(String login) {
         return userRepository.findUserByLogin(login);
     }
+
+    public void countRanking(User user) {
+        List<Integer> rankings = new ArrayList<>();
+        for (Feedback f : user.getFeedbacks()) {
+            rankings.add(f.getRating());
+        }
+        long sum = 0;
+        long count = 0;
+        for (Integer r : rankings) {
+            sum += r;
+            count++;
+        }
+        if (count > 0) {
+            user.setRanking((float) ((double) sum / count));
+        } else {
+            user.setRanking((float) 0);
+        }
+    }
+
 }

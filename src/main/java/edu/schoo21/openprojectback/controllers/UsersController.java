@@ -7,7 +7,6 @@ import edu.schoo21.openprojectback.models.dto.CatDto;
 import edu.schoo21.openprojectback.models.dto.FeedbackDto;
 import edu.schoo21.openprojectback.models.dto.UserDto;
 import edu.schoo21.openprojectback.requests.IdRequest;
-import edu.schoo21.openprojectback.requests.RankRequest;
 import edu.schoo21.openprojectback.services.CatsService;
 import edu.schoo21.openprojectback.services.FeedbackService;
 import edu.schoo21.openprojectback.services.UsersService;
@@ -37,9 +36,9 @@ public class UsersController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<User> addNewUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> addNewUser(@RequestBody UserDto userDto) {
         if (usersService.findUserByLogin(userDto.getLogin()) != null)
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("User with this login already exist!");
         return ResponseEntity.ok(usersService.addNewUser(userDto));
     }
 
@@ -70,15 +69,6 @@ public class UsersController {
         usersService.deleteById(id);
     }
 
-    @PostMapping("/{user-id}/rank")
-    @ResponseStatus(HttpStatus.OK)
-    public void addRanking(@RequestBody RankRequest rank, @PathVariable("user-id") Long id) {
-        User user = usersService.findById(id);
-        user.getRankings().add(rank.getRank());
-        user.setRanking((float) user.getRankings().stream().mapToInt(r -> r).average().orElse(0));
-        usersService.save(user);
-    }
-
     /////////////////////////
 
     @GetMapping("/{user-id}/feedbacks")
@@ -91,24 +81,27 @@ public class UsersController {
     @ResponseStatus(HttpStatus.CREATED)
     public Feedback addFeedbackToUser(@RequestBody FeedbackDto feedbackDto, @PathVariable("user-id") Long userId) {
         User user = usersService.findById(userId);
-        Feedback feedback = new Feedback(feedbackDto.getUserId(), feedbackDto.getDate(),
-                feedbackDto.getText(), user.getName(), user.getAvatar(), user.getRanking());
+        Feedback feedback = new Feedback(feedbackDto.getUserId(), feedbackDto.getDate(), feedbackDto.getText(),
+                user.getName(), user.getAvatar(), feedbackDto.getRating());
         feedbackService.save(feedback);
         user.getFeedbacks().add(feedback);
+        usersService.countRanking(user);
         usersService.save(user);
         return feedback;
     }
 
     @PutMapping("/{user-id}/feedbacks/{feedback-id}")
     @ResponseStatus(HttpStatus.OK)
-    public User updateFeedbackToUser(@RequestBody FeedbackDto feedbackDto, @PathVariable("user-id") String userId,
-                                     @PathVariable("feedback-id") String feedbackId) {
-        Feedback feedback = feedbackService.findById(Long.valueOf(feedbackId));
+    public User updateFeedbackToUser(@RequestBody FeedbackDto feedbackDto, @PathVariable("user-id") Long userId,
+                                     @PathVariable("feedback-id") Long feedbackId) {
+        Feedback feedback = feedbackService.findById(feedbackId);
         feedback.setUser_id(feedbackDto.getUserId());
         feedback.setDate(feedbackDto.getDate());
         feedback.setText(feedbackDto.getText());
         feedbackService.save(feedback);
-        return usersService.findById(Long.valueOf(userId));
+        User user = usersService.findById(userId);
+        usersService.countRanking(user);
+        return user;
     }
 
     @DeleteMapping("/{user-id}/feedbacks/{feedback-id}")
