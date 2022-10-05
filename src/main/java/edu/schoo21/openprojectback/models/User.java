@@ -27,6 +27,7 @@ public class User implements UserDetails {
     private Long phoneNumber;
     private String mail;
     private String address;
+    @Column(columnDefinition="text")
     private String avatar;
     private Float ranking;
     private boolean accountNonExpired;

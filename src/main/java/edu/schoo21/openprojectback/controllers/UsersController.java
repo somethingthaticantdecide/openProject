@@ -11,12 +11,19 @@ import edu.schoo21.openprojectback.services.CatsService;
 import edu.schoo21.openprojectback.services.FeedbackService;
 import edu.schoo21.openprojectback.services.UsersService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.Collection;
+import java.util.Objects;
 
 @CrossOrigin
 @RestController
@@ -44,8 +51,8 @@ public class UsersController {
 
     @GetMapping("/{user-id}")
     @ResponseStatus(HttpStatus.OK)
-    public User getUser(@PathVariable("user-id") String id) {
-        return usersService.findById(Long.valueOf(id));
+    public User getUser(@PathVariable("user-id") Long id) {
+        return usersService.findById(id);
     }
 
     @GetMapping("/info")
@@ -67,6 +74,21 @@ public class UsersController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable("user-id") Long id) {
         usersService.deleteById(id);
+    }
+
+    @PostMapping(value = "/{user-id}/poster", consumes = "multipart/form-data")
+    public ResponseEntity<?> addFilm(@RequestParam("file") MultipartFile file, @PathVariable("user-id") Long id) throws IOException {
+        User user = usersService.findById(id);
+        if (null != user) {
+            if (file.getSize() > 0) {
+                user.setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));
+//            } else {
+//                String filename = Objects.requireNonNull(getClass().getClassLoader().getResource("/images/poster-holder.jpg")).getFile();
+//                user.setAvatar(Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(new File(filename))));
+            }
+            usersService.save(user);
+        }
+        return ResponseEntity.ok().build();
     }
 
     /////////////////////////
