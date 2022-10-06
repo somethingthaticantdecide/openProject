@@ -87,7 +87,10 @@ public class UsersController {
         Avatar avatar = avatarService.findById(id);
         User user = usersService.findById(id);
         InetAddress ip = InetAddress.getLocalHost();
-        if (avatar != null && user != null && file.getSize() > 0) {
+        if (user != null && file.getSize() > 0) {
+            if (avatar == null) {
+                avatar = new Avatar();
+            }
             avatar.setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));
             avatarService.save(avatar);
             user.setAvatar(ip.getHostAddress() + ":" + serverPort + "/avatars/" + id);

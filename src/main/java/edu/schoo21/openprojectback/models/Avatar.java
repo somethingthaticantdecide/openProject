@@ -15,5 +15,6 @@ public class Avatar {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    @Column(columnDefinition="text")
     private String avatar;
 }
