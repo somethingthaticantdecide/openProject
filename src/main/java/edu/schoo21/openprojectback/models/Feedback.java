@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -29,6 +30,6 @@ public class Feedback {
         this.text = text;
         this.name = name;
 //        this.avatar = avatar;
-        this.rating = rating != null ? rating : Integer.valueOf(1);
+        this.rating = Objects.requireNonNullElse(rating, 1);
     }
 }
