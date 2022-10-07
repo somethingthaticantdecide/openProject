@@ -27,7 +27,7 @@ public class Cat {
     private Boolean certificates;
     private String info;
     private String photo;
-    private String avatar;
+    private String address;
     @ManyToOne
     @JoinColumn(name = "owner_id")
     @JsonIgnore
@@ -45,6 +45,7 @@ public class Cat {
         this.info = catDto.getInfo();
         this.photo = catDto.getPhoto();
         this.owner = owner;
+        this.address = owner.getAddress();
     }
 
     public Cat(String name, Boolean sex, String breed, Integer age, Integer price, Boolean passport, Boolean vaccination, Boolean certificates, String info, String photo) {

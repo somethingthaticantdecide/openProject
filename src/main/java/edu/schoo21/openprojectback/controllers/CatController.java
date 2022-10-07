@@ -4,10 +4,13 @@ import edu.schoo21.openprojectback.models.Avatar;
 import edu.schoo21.openprojectback.models.Cat;
 import edu.schoo21.openprojectback.models.dto.CatDto;
 import edu.schoo21.openprojectback.models.response.CatProfileResponse;
+import edu.schoo21.openprojectback.requests.CatSearchRequest;
 import edu.schoo21.openprojectback.services.AvatarService;
 import edu.schoo21.openprojectback.services.CatsService;
+import edu.schoo21.openprojectback.specification.CatSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @CrossOrigin
@@ -34,6 +38,22 @@ public class CatController {
     @ResponseStatus(HttpStatus.OK)
     public Collection<CatProfileResponse> getAllCats() {
         return catsService.findAll().stream().map(CatProfileResponse::new).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<CatProfileResponse> searchCats(CatSearchRequest searchRequest) {
+        Specification<Cat> specs = Specification
+                .where(CatSpecifications.likeAddress(searchRequest.getAddress()))
+                .and(CatSpecifications.likeBreed(searchRequest.getBreed()))
+                .and(CatSpecifications.equalAge(searchRequest.getAge()))
+                .and(CatSpecifications.equalSex(searchRequest.getSex()))
+                .and(CatSpecifications.equalPassport(searchRequest.getPassport()))
+                .and(CatSpecifications.equalVaccination(searchRequest.getVaccination()))
+                .and(CatSpecifications.equalCertificates(searchRequest.getCertificates()))
+                .and(CatSpecifications.priceFrom(searchRequest.getPriceFrom()))
+                .and(CatSpecifications.priceTo(searchRequest.getPriceTo()));
+        return catsService.findAll(specs).stream().map(CatProfileResponse::new).collect(Collectors.toCollection(ArrayList::new));
     }
 
     @PostMapping()
