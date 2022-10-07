@@ -2,12 +2,10 @@ package edu.schoo21.openprojectback.controllers;
 
 import edu.schoo21.openprojectback.models.Avatar;
 import edu.schoo21.openprojectback.models.Cat;
-import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.models.dto.CatDto;
 import edu.schoo21.openprojectback.models.response.CatProfileResponse;
 import edu.schoo21.openprojectback.services.AvatarService;
 import edu.schoo21.openprojectback.services.CatsService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -69,7 +67,7 @@ public class CatController {
         if (cat != null && file.getSize() > 0) {
             avatar.setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));
             avatarService.saveAndFlush(avatar);
-            cat.setAvatar(APP_ADDRESS + AVATARS + avatar.getId());
+            cat.setPhoto(APP_ADDRESS + AVATARS + avatar.getId());
             catsService.save(cat);
             return ResponseEntity.ok().build();
         }
