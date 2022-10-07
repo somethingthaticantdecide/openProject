@@ -27,6 +27,7 @@ public class Cat {
     private Boolean certificates;
     private String info;
     private String photo;
+    private String avatar;
     @ManyToOne
     @JoinColumn(name = "owner_id")
     @JsonIgnore

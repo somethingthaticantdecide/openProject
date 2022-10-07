@@ -21,4 +21,8 @@ public class AvatarService {
     public void save(Avatar avatar) {
         avatarRepository.save(avatar);
     }
+
+    public void saveAndFlush(Avatar avatar) {
+        avatarRepository.saveAndFlush(avatar);
+    }
 }

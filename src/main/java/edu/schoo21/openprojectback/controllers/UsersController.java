@@ -13,17 +13,14 @@ import edu.schoo21.openprojectback.services.CatsService;
 import edu.schoo21.openprojectback.services.FeedbackService;
 import edu.schoo21.openprojectback.services.UsersService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Base64;
 import java.util.Collection;
 
@@ -32,10 +29,9 @@ import java.util.Collection;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UsersController {
-
-    @Value("${server.port}")
-    private String serverPort;
-
+    public static final String AVATARS = "/avatars/";
+    @Value("${app.address}")
+    public String APP_ADDRESS;
     private final UsersService usersService;
     private final FeedbackService feedbackService;
     private final CatsService catsService;
@@ -84,16 +80,12 @@ public class UsersController {
 
     @PostMapping(value = "/{user-id}/avatar", consumes = "multipart/form-data")
     public ResponseEntity<?> addFilm(@RequestParam("file") MultipartFile file, @PathVariable("user-id") Long id) throws IOException {
-        Avatar avatar = avatarService.findById(id);
+        Avatar avatar = new Avatar();
         User user = usersService.findById(id);
-        InetAddress ip = InetAddress.getLocalHost();
         if (user != null && file.getSize() > 0) {
-            if (avatar == null) {
-                avatar = new Avatar();
-            }
             avatar.setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));
-            avatarService.save(avatar);
-            user.setAvatar(ip.getHostAddress() + ":" + serverPort + "/avatars/" + id);
+            avatarService.saveAndFlush(avatar);
+            user.setAvatar(APP_ADDRESS + AVATARS + avatar.getId());
             usersService.save(user);
             return ResponseEntity.ok().build();
         }
