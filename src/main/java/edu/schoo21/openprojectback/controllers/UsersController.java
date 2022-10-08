@@ -14,6 +14,7 @@ import edu.schoo21.openprojectback.services.UsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -56,19 +57,31 @@ public class UsersController {
         return null;
     }
 
-    @PostMapping()
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addNewUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> addNewUser(@ModelAttribute UserDto userDto, @RequestParam("file") MultipartFile file) {
         if (usersService.findUserByLogin(userDto.getLogin()) != null)
             return ResponseEntity.badRequest().body("User with this login already exist!");
         User user = usersService.addNewUser(userDto);
+        try {
+            addAvatar(file, user.getId());
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/{user-id}")
+    @PutMapping(value ="/{user-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public User updateUser(@RequestBody UserDto userDto, @PathVariable("user-id") Long id) {
-        return usersService.updateUser(userDto, id);
+    public ResponseEntity<?> updateUser(@ModelAttribute UserDto userDto, @PathVariable("user-id") Long id, @RequestParam("file") MultipartFile file) {
+        User user = usersService.findById(id);
+        try {
+            usersService.updateUser(user, userDto);
+            addAvatar(file, user.getId());
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return  ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{user-id}")
@@ -103,7 +116,7 @@ public class UsersController {
         User user = usersService.findById(userId);
         User feedbackUser = usersService.findById(feedbackDto.getUserId());
         Feedback feedback = new Feedback(feedbackUser.getId(), feedbackDto.getDate(), feedbackDto.getText(),
-                feedbackUser.getName(), feedbackDto.getRating());
+                feedbackUser.getName(), feedbackDto.getRating(), feedbackUser.getAvatar());
         feedbackService.save(feedback);
         user.getFeedbacks().add(feedback);
         usersService.countRanking(user);

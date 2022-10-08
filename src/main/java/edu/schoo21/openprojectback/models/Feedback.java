@@ -21,15 +21,15 @@ public class Feedback {
     private Date date;
     private String text;
     private String name;
-//    private String avatar;
+    private String avatar;
     private Integer rating;
 
-    public Feedback(Long user_id, Date date, String text, String name, Integer rating) {
+    public Feedback(Long user_id, Date date, String text, String name, Integer rating, String avatar) {
         this.user_id = user_id;
         this.date = date;
         this.text = text;
         this.name = name;
-//        this.avatar = avatar;
         this.rating = Objects.requireNonNullElse(rating, 1);
+        this.avatar = avatar;
     }
 }

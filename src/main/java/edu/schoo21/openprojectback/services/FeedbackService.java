@@ -33,7 +33,7 @@ public class FeedbackService {
 
     public Feedback update(FeedbackDto feedbackDto, String id) {
         Feedback feedback = feedbackRepository.findById(Long.valueOf(id)).orElseThrow(NotFoundException::new);
-        Long userId = Long.valueOf(feedbackDto.getUserId());
+        Long userId = feedbackDto.getUserId();
         userRepository.findById(userId).orElseThrow(NotFoundException::new);
         feedback.setUser_id(userId);
         feedback.setDate(feedbackDto.getDate());
@@ -42,7 +42,7 @@ public class FeedbackService {
     }
 
     public Feedback addNew(FeedbackDto feedbackDto) {
-        Long userId = Long.valueOf(feedbackDto.getUserId());
+        Long userId = feedbackDto.getUserId();
         userRepository.findById(userId).orElseThrow(NotFoundException::new);
         Feedback feedback = new Feedback();
         feedback.setUser_id(userId);

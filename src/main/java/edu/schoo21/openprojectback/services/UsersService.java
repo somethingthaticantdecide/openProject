@@ -46,15 +46,13 @@ public class UsersService implements UserDetailsService {
         userRepository.saveAndFlush(user);
     }
 
-    public User updateUser(UserDto userDto, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(NotFoundException::new);
+    public User updateUser(User user, UserDto userDto) {
         if (userDto.getLogin() != null) user.setLogin(userDto.getLogin());
         if (userDto.getPassword() != null) user.setPassword(userDto.getPassword());
         if (userDto.getName() != null) user.setName(userDto.getName());
         if (userDto.getPhoneNumber() != null) user.setPhoneNumber(userDto.getPhoneNumber());
         if (userDto.getMail() != null) user.setMail(userDto.getMail());
         if (userDto.getAddress() != null) user.setAddress(userDto.getAddress());
-        if (userDto.getAvatar() != null) user.setAvatar(userDto.getAvatar());
         if (userDto.getRanking() != null) user.setRanking(userDto.getRanking());
         return userRepository.saveAndFlush(user);
     }
