@@ -1,6 +1,5 @@
 package edu.schoo21.openprojectback.controllers;
 
-import edu.schoo21.openprojectback.models.Cat;
 import edu.schoo21.openprojectback.models.Feedback;
 import edu.schoo21.openprojectback.models.dto.FeedbackDto;
 import edu.schoo21.openprojectback.services.FeedbackService;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/feedbacks")
 public class FeedbackController {
