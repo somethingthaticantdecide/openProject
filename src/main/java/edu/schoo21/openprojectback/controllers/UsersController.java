@@ -86,7 +86,7 @@ public class UsersController {
 //        return  ResponseEntity.ok(user);
 //    }
 
-    @PutMapping(value ="/{user-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value ="/{user-id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> updateUser(@RequestBody UserDto userDto, @PathVariable("user-id") Long id) {
         User user = usersService.findById(id);
