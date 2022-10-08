@@ -40,9 +40,9 @@ public class CatController {
         return catsService.findAll().stream().map(CatProfileResponse::new).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<CatProfileResponse> searchCats(CatSearchRequest searchRequest) {
+    public Collection<CatProfileResponse> searchCats(@RequestBody CatSearchRequest searchRequest) {
         Specification<Cat> specs = Specification
                 .where(CatSpecifications.likeAddress(searchRequest.getAddress()))
                 .and(CatSpecifications.likeBreed(searchRequest.getBreed()))
