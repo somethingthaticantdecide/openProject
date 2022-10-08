@@ -1,6 +1,7 @@
 package edu.schoo21.openprojectback.models.dto;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class UserDto {

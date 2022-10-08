@@ -88,11 +88,7 @@ public class UsersService implements UserDetailsService {
             sum += r;
             count++;
         }
-        if (count > 0) {
-            user.setRanking((float) ((double) sum / count));
-        } else {
-            user.setRanking((float) 0);
-        }
+        user.setRanking(count > 0 ? (float) ((double) sum / count) : (float) 0);
     }
 
 }

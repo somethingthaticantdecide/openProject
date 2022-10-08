@@ -1,6 +1,5 @@
 package edu.schoo21.openprojectback.controllers;
 
-import edu.schoo21.openprojectback.models.Avatar;
 import edu.schoo21.openprojectback.models.Cat;
 import edu.schoo21.openprojectback.models.Feedback;
 import edu.schoo21.openprojectback.models.User;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.Collection;
 
 @CrossOrigin
@@ -43,14 +41,6 @@ public class UsersController {
         return usersService.findAll();
     }
 
-    @PostMapping()
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addNewUser(@RequestBody UserDto userDto) {
-        if (usersService.findUserByLogin(userDto.getLogin()) != null)
-            return ResponseEntity.badRequest().body("User with this login already exist!");
-        return ResponseEntity.ok(usersService.addNewUser(userDto));
-    }
-
     @GetMapping("/{user-id}")
     @ResponseStatus(HttpStatus.OK)
     public User getUser(@PathVariable("user-id") Long id) {
@@ -66,6 +56,15 @@ public class UsersController {
         return null;
     }
 
+    @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> addNewUser(@RequestBody UserDto userDto) {
+        if (usersService.findUserByLogin(userDto.getLogin()) != null)
+            return ResponseEntity.badRequest().body("User with this login already exist!");
+        User user = usersService.addNewUser(userDto);
+        return ResponseEntity.ok(user);
+    }
+
     @PutMapping("/{user-id}")
     @ResponseStatus(HttpStatus.OK)
     public User updateUser(@RequestBody UserDto userDto, @PathVariable("user-id") Long id) {
@@ -79,17 +78,15 @@ public class UsersController {
     }
 
     @PostMapping(value = "/{user-id}/avatar", consumes = "multipart/form-data")
-    public ResponseEntity<?> addFilm(@RequestParam("file") MultipartFile file, @PathVariable("user-id") Long id) throws IOException {
-        Avatar avatar = new Avatar();
-        User user = usersService.findById(id);
-        if (user != null && file.getSize() > 0) {
-            avatar.setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));
-            avatarService.saveAndFlush(avatar);
-            user.setAvatar(APP_ADDRESS + AVATARS + avatar.getId());
+    public ResponseEntity<?> addAvatar(@RequestParam("file") MultipartFile file, @PathVariable("user-id") Long id) throws IOException {
+        try {
+            User user = usersService.findById(id);
+            user.setAvatar(avatarService.addAvatar(file));
             usersService.save(user);
-            return ResponseEntity.ok().build();
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
     }
 
     /////////////////////////
@@ -104,8 +101,9 @@ public class UsersController {
     @ResponseStatus(HttpStatus.CREATED)
     public Feedback addFeedbackToUser(@RequestBody FeedbackDto feedbackDto, @PathVariable("user-id") Long userId) {
         User user = usersService.findById(userId);
-        Feedback feedback = new Feedback(feedbackDto.getUserId(), feedbackDto.getDate(), feedbackDto.getText(),
-                user.getName(), feedbackDto.getRating());
+        User feedbackUser = usersService.findById(feedbackDto.getUserId());
+        Feedback feedback = new Feedback(feedbackUser.getId(), feedbackDto.getDate(), feedbackDto.getText(),
+                feedbackUser.getName(), feedbackDto.getRating());
         feedbackService.save(feedback);
         user.getFeedbacks().add(feedback);
         usersService.countRanking(user);
