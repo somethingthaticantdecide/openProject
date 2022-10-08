@@ -72,18 +72,27 @@ public class UsersController {
         return ResponseEntity.ok(user);
     }
 
+//    @PutMapping(value ="/{user-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @ResponseStatus(HttpStatus.OK)
+//    public ResponseEntity<?> updateUser(UserDto userDto, @PathVariable("user-id") Long id, @RequestParam("file") MultipartFile file) {
+//        User user = usersService.findById(id);
+//        try {
+//            usersService.updateUser(user, userDto);
+//            user.setAvatar(avatarService.saveImageToBase(file));
+//            usersService.save(user);
+//        } catch (IOException e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        return  ResponseEntity.ok(user);
+//    }
+
     @PutMapping(value ="/{user-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> updateUser(UserDto userDto, @PathVariable("user-id") Long id, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> updateUser(@RequestBody UserDto userDto, @PathVariable("user-id") Long id) {
         User user = usersService.findById(id);
-        try {
-            usersService.updateUser(user, userDto);
-            user.setAvatar(avatarService.saveImageToBase(file));
-            usersService.save(user);
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().build();
-        }
-        return  ResponseEntity.ok(user);
+        usersService.updateUser(user, userDto);
+        usersService.save(user);
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{user-id}")
@@ -92,17 +101,17 @@ public class UsersController {
         usersService.deleteById(id);
     }
 
-//    @PostMapping(value = "/{user-id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<?> addAvatar(@RequestParam("file") MultipartFile file, @PathVariable("user-id") Long id) throws IOException {
-//        try {
-//            User user = usersService.findById(id);
-//            user.setAvatar(avatarService.saveImageToBase(file));
-//            usersService.save(user);
-//        } catch (IOException e) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping(value = "/{user-id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addAvatar(@RequestParam("file") MultipartFile file, @PathVariable("user-id") Long id) {
+        try {
+            User user = usersService.findById(id);
+            user.setAvatar(avatarService.saveImageToBase(file));
+            usersService.save(user);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
 
     /////////////////////////
 
@@ -126,19 +135,19 @@ public class UsersController {
         return feedback;
     }
 
-    @PutMapping("/{user-id}/feedbacks/{feedback-id}")
-    @ResponseStatus(HttpStatus.OK)
-    public User updateFeedbackToUser(@RequestBody FeedbackDto feedbackDto, @PathVariable("user-id") Long userId,
-                                     @PathVariable("feedback-id") Long feedbackId) {
-        Feedback feedback = feedbackService.findById(feedbackId);
-        feedback.setUser_id(feedbackDto.getUserId());
-        feedback.setDate(feedbackDto.getDate());
-        feedback.setText(feedbackDto.getText());
-        feedbackService.save(feedback);
-        User user = usersService.findById(userId);
-        usersService.countRanking(user);
-        return user;
-    }
+//    @PutMapping("/{user-id}/feedbacks/{feedback-id}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public User updateFeedbackToUser(@RequestBody FeedbackDto feedbackDto, @PathVariable("user-id") Long userId,
+//                                     @PathVariable("feedback-id") Long feedbackId) {
+//        Feedback feedback = feedbackService.findById(feedbackId);
+//        feedback.setUser_id(feedbackDto.getUserId());
+//        feedback.setDate(feedbackDto.getDate());
+//        feedback.setText(feedbackDto.getText());
+//        feedbackService.save(feedback);
+//        User user = usersService.findById(userId);
+//        usersService.countRanking(user);
+//        return user;
+//    }
 
     @DeleteMapping("/{user-id}/feedbacks/{feedback-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -158,33 +167,53 @@ public class UsersController {
         return usersService.findById(Long.valueOf(id)).getCats();
     }
 
-    @PostMapping("/{user-id}/cats")
+//    @PostMapping(value = "/{user-id}/cats", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ResponseEntity<?> addCatToUser(CatDto catDto, @PathVariable("user-id") Long userId, @RequestParam("file") MultipartFile file) {
+//        User user = usersService.findById(userId);
+//        Cat cat = new Cat(catDto, user);
+//        try {
+//            cat.setPhoto(avatarService.saveImageToBase(file));
+//            catsService.save(cat);
+//            user.getCats().add(cat);
+//            usersService.save(user);
+//        } catch (IOException e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        return ResponseEntity.ok(cat);
+//    }
+
+    @PostMapping(value = "/{user-id}/cats")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addCatToUser(@RequestBody CatDto catDto, @PathVariable("user-id") Long userId, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> addCatToUser(@RequestBody CatDto catDto, @PathVariable("user-id") Long userId) {
         User user = usersService.findById(userId);
         Cat cat = new Cat(catDto, user);
-        try {
-            cat.setPhoto(avatarService.saveImageToBase(file));
-            catsService.save(cat);
-            user.getCats().add(cat);
-            usersService.save(user);
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        catsService.save(cat);
+        user.getCats().add(cat);
+        usersService.save(user);
         return ResponseEntity.ok(cat);
     }
 
-    @PutMapping(value = "/{user-id}/cats/{cat-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @PutMapping(value = "/{user-id}/cats/{cat-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @ResponseStatus(HttpStatus.OK)
+//    public ResponseEntity<?> updateCatsToUser(CatDto catDto, @PathVariable("user-id") Long userId, @PathVariable("cat-id") Long catId, @RequestParam("file") MultipartFile file) {
+//        Cat cat = catsService.findById(catId);
+//        try {
+//            catsService.update(catDto, cat);
+//            cat.setPhoto(avatarService.saveImageToBase(file));
+//            catsService.save(cat);
+//        } catch (IOException e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        return ResponseEntity.ok(usersService.findById(userId));
+//    }
+
+    @PutMapping(value = "/{user-id}/cats/{cat-id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> updateCatsToUser(CatDto catDto, @PathVariable("user-id") Long userId, @PathVariable("cat-id") Long catId, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> updateCatsToUser(@RequestBody CatDto catDto, @PathVariable("user-id") Long userId, @PathVariable("cat-id") Long catId) {
         Cat cat = catsService.findById(catId);
-        try {
-            catsService.update(catDto, cat);
-            cat.setPhoto(avatarService.saveImageToBase(file));
-            catsService.save(cat);
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        catsService.update(catDto, cat);
+        catsService.save(cat);
         return ResponseEntity.ok(usersService.findById(userId));
     }
 
