@@ -59,7 +59,7 @@ public class UsersController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addNewUser(@ModelAttribute UserDto userDto, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> addNewUser(UserDto userDto, @RequestParam("file") MultipartFile file) {
         if (usersService.findUserByLogin(userDto.getLogin()) != null)
             return ResponseEntity.badRequest().body("User with this login already exist!");
         User user = usersService.addNewUser(userDto);
@@ -73,7 +73,7 @@ public class UsersController {
 
     @PutMapping(value ="/{user-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> updateUser(@ModelAttribute UserDto userDto, @PathVariable("user-id") Long id, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> updateUser(UserDto userDto, @PathVariable("user-id") Long id, @RequestParam("file") MultipartFile file) {
         User user = usersService.findById(id);
         try {
             usersService.updateUser(user, userDto);
