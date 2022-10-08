@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -118,7 +119,9 @@ public class UsersController {
     @GetMapping("/{user-id}/feedbacks")
     @ResponseStatus(HttpStatus.OK)
     public Collection<Feedback> getFeedbacksByUser(@PathVariable("user-id") Long id) {
-        return usersService.findById(id).getFeedbacks();
+        List<Feedback> feedbackList = usersService.findById(id).getFeedbacks();
+        feedbackList.forEach(feedbackService::updateOwnerImage);
+        return feedbackList;
     }
 
     @PostMapping("/{user-id}/feedbacks")
