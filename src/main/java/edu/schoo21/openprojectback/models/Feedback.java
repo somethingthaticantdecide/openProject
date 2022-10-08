@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -19,10 +20,16 @@ public class Feedback {
     private Long user_id;
     private Date date;
     private String text;
+    private String name;
+    private String avatar;
+    private Integer rating;
 
-    public Feedback(Long user_id, Date date, String text) {
+    public Feedback(Long user_id, Date date, String text, String name, Integer rating, String avatar) {
         this.user_id = user_id;
         this.date = date;
         this.text = text;
+        this.name = name;
+        this.rating = Objects.requireNonNullElse(rating, 1);
+        this.avatar = avatar;
     }
 }

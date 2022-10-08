@@ -5,9 +5,11 @@ import edu.schoo21.openprojectback.models.Cat;
 import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.models.dto.CatDto;
 import edu.schoo21.openprojectback.repository.CatRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class CatsService {
@@ -35,8 +37,8 @@ public class CatsService {
                 catDto.getCertificates(), catDto.getInfo(), catDto.getPhoto()));
     }
 
-    public Cat update(CatDto catDto, String id) {
-        Cat cat = catRepository.findById(Long.parseLong(id)).orElseThrow(NotFoundException::new);
+    public Cat update(CatDto catDto, Long id) {
+        Cat cat = catRepository.findById(id).orElseThrow(NotFoundException::new);
         cat.setName(catDto.getName());
         cat.setSex(catDto.getSex());
         cat.setBreed(catDto.getBreed());
@@ -52,5 +54,9 @@ public class CatsService {
 
     public void deleteById(Long id) {
         catRepository.deleteById(id);
+    }
+
+    public List<Cat> findAll(Specification<Cat> specs) {
+        return catRepository.findAll(specs);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -42,8 +43,6 @@ public class User implements UserDetails {
     @OneToMany
     @ToString.Exclude
     private List<Cat> favorites;
-    @ElementCollection
-    private List<Integer> rankings;
 
     public User(String login, String password, String name, Long phoneNumber, String mail, String address, String avatar, Float ranking) {
         this.login = login;
@@ -53,7 +52,7 @@ public class User implements UserDetails {
         this.mail = mail;
         this.address = address;
         this.avatar = avatar;
-        this.ranking = ranking;
+        this.ranking = Objects.requireNonNullElse(ranking, 0f);
     }
 
     public User(UserDto userDto) {
@@ -68,6 +67,7 @@ public class User implements UserDetails {
         this.accountNonLocked = true;
         this.credentialsNonExpired = true;
         this.enabled = true;
+        this.ranking = Objects.requireNonNullElse(ranking, 0f);
     }
 
     @Override
