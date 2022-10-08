@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
 
+@CrossOrigin
 @Controller
 @AllArgsConstructor
 @RequestMapping("/avatars")
