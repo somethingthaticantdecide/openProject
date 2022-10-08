@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @CrossOrigin
@@ -71,7 +70,8 @@ public class CatController {
     @PutMapping("/{cat-id}")
     @ResponseStatus(HttpStatus.OK)
     public Cat updateCat(@RequestBody CatDto catDto, @PathVariable("cat-id") Long id) {
-        return catsService.update(catDto, id);
+        Cat cat = catsService.findById(id);
+        return catsService.update(catDto, cat);
     }
 
     @DeleteMapping("/{cat-id}")
@@ -80,8 +80,8 @@ public class CatController {
         catsService.deleteById(Long.valueOf(id));
     }
 
-    @PostMapping(value = "/{cat-id}/avatar", consumes = "multipart/form-data")
-    public ResponseEntity<?> addFilm(@RequestParam("file") MultipartFile file, @PathVariable("cat-id") Long id) throws IOException {
+    @PostMapping(value = "/{cat-id}/photo", consumes = "multipart/form-data")
+    public ResponseEntity<?> addPhoto(@RequestParam("file") MultipartFile file, @PathVariable("cat-id") Long id) throws IOException {
         Avatar avatar = new Avatar();
         Cat cat = catsService.findById(id);
         if (cat != null && file.getSize() > 0) {

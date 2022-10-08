@@ -1,9 +1,7 @@
 package edu.schoo21.openprojectback.services;
 
 import edu.schoo21.openprojectback.models.Avatar;
-import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.repository.AvatarRepository;
-import edu.schoo21.openprojectback.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,7 +32,7 @@ public class AvatarService {
         avatarRepository.saveAndFlush(avatar);
     }
 
-    public String addAvatar(MultipartFile file) throws IOException {
+    public String saveImageToBase(MultipartFile file) throws IOException {
         if (file != null && file.getSize() > 0) {
             Avatar avatar = new Avatar();
             avatar.setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));

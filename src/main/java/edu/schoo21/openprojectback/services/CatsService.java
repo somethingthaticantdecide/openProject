@@ -37,8 +37,7 @@ public class CatsService {
                 catDto.getCertificates(), catDto.getInfo(), catDto.getPhoto()));
     }
 
-    public Cat update(CatDto catDto, Long id) {
-        Cat cat = catRepository.findById(id).orElseThrow(NotFoundException::new);
+    public Cat update(CatDto catDto, Cat cat) {
         cat.setName(catDto.getName());
         cat.setSex(catDto.getSex());
         cat.setBreed(catDto.getBreed());
@@ -48,7 +47,7 @@ public class CatsService {
         cat.setVaccination(catDto.getVaccination());
         cat.setCertificates(catDto.getCertificates());
         cat.setInfo(catDto.getInfo());
-        cat.setPhoto(catDto.getPhoto());
+//        cat.setPhoto(catDto.getPhoto());
         return catRepository.saveAndFlush(cat);
     }
 

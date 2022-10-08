@@ -64,7 +64,8 @@ public class UsersController {
             return ResponseEntity.badRequest().body("User with this login already exist!");
         User user = usersService.addNewUser(userDto);
         try {
-            addAvatar(file, user.getId());
+            user.setAvatar(avatarService.saveImageToBase(file));
+            usersService.save(user);
         } catch (IOException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -77,7 +78,8 @@ public class UsersController {
         User user = usersService.findById(id);
         try {
             usersService.updateUser(user, userDto);
-            addAvatar(file, user.getId());
+            user.setAvatar(avatarService.saveImageToBase(file));
+            usersService.save(user);
         } catch (IOException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -90,17 +92,17 @@ public class UsersController {
         usersService.deleteById(id);
     }
 
-    @PostMapping(value = "/{user-id}/avatar", consumes = "multipart/form-data")
-    public ResponseEntity<?> addAvatar(@RequestParam("file") MultipartFile file, @PathVariable("user-id") Long id) throws IOException {
-        try {
-            User user = usersService.findById(id);
-            user.setAvatar(avatarService.addAvatar(file));
-            usersService.save(user);
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping(value = "/{user-id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<?> addAvatar(@RequestParam("file") MultipartFile file, @PathVariable("user-id") Long id) throws IOException {
+//        try {
+//            User user = usersService.findById(id);
+//            user.setAvatar(avatarService.saveImageToBase(file));
+//            usersService.save(user);
+//        } catch (IOException e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        return ResponseEntity.ok().build();
+//    }
 
     /////////////////////////
 
@@ -158,21 +160,32 @@ public class UsersController {
 
     @PostMapping("/{user-id}/cats")
     @ResponseStatus(HttpStatus.CREATED)
-    public Cat addCatsToUser(@RequestBody CatDto catDto, @PathVariable("user-id") Long userId) {
+    public ResponseEntity<?> addCatToUser(@RequestBody CatDto catDto, @PathVariable("user-id") Long userId, @RequestParam("file") MultipartFile file) {
         User user = usersService.findById(userId);
         Cat cat = new Cat(catDto, user);
-        catsService.save(cat);
-
-        user.getCats().add(cat);
-        usersService.save(user);
-        return cat;
+        try {
+            cat.setPhoto(avatarService.saveImageToBase(file));
+            catsService.save(cat);
+            user.getCats().add(cat);
+            usersService.save(user);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(cat);
     }
 
-    @PutMapping("/{user-id}/cats/{cat-id}")
+    @PutMapping(value = "/{user-id}/cats/{cat-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public User updateCatsToUser(@RequestBody CatDto catDto, @PathVariable("user-id") Long userId, @PathVariable("cat-id") Long catId) {
-        catsService.update(catDto, catId);
-        return usersService.findById(userId);
+    public ResponseEntity<?> updateCatsToUser(CatDto catDto, @PathVariable("user-id") Long userId, @PathVariable("cat-id") Long catId, @RequestParam("file") MultipartFile file) {
+        Cat cat = catsService.findById(catId);
+        try {
+            catsService.update(catDto, cat);
+            cat.setPhoto(avatarService.saveImageToBase(file));
+            catsService.save(cat);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(usersService.findById(userId));
     }
 
     @DeleteMapping("/{user-id}/cats/{cat-id}")
@@ -204,12 +217,12 @@ public class UsersController {
         return cat;
     }
 
-    @PutMapping("/{user-id}/favourites/{cat-id}")
-    @ResponseStatus(HttpStatus.OK)
-    public User updateFavouritesCatToUser(@RequestBody CatDto catDto, @PathVariable("user-id") Long userId, @PathVariable("cat-id") Long catId) {
-        catsService.update(catDto, catId);
-        return usersService.findById(userId);
-    }
+//    @PutMapping("/{user-id}/favourites/{cat-id}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public User updateFavouritesCatToUser(@RequestBody CatDto catDto, @PathVariable("user-id") Long userId, @PathVariable("cat-id") Long catId) {
+//        catsService.update(catDto, catId);
+//        return usersService.findById(userId);
+//    }
 
     @DeleteMapping("/{user-id}/favourites/{cat-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
