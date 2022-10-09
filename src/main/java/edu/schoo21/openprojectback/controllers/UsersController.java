@@ -96,11 +96,11 @@ public class UsersController {
         return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping("/{user-id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable("user-id") Long id) {
-        usersService.deleteById(id);
-    }
+//    @DeleteMapping("/{user-id}")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public void deleteUser(@PathVariable("user-id") Long id) {
+//        usersService.deleteById(id);
+//    }
 
     @PostMapping(value = "/{user-id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addAvatar(@RequestParam("file") MultipartFile file, @PathVariable("user-id") Long id) {
@@ -120,18 +120,19 @@ public class UsersController {
     @ResponseStatus(HttpStatus.OK)
     public Collection<Feedback> getFeedbacksByUser(@PathVariable("user-id") Long id) {
         List<Feedback> feedbackList = usersService.findById(id).getFeedbacks();
-        feedbackList.forEach(feedbackService::updateOwnerImage);
+        feedbackList.forEach(feedbackService::updateOwnerData);
         return feedbackList;
     }
 
     @PostMapping("/{user-id}/feedbacks")
     @ResponseStatus(HttpStatus.CREATED)
     public Feedback addFeedbackToUser(@RequestBody FeedbackDto feedbackDto, @PathVariable("user-id") Long userId) {
-        User user = usersService.findById(userId);
         User feedbackUser = usersService.findById(feedbackDto.getUserId());
         Feedback feedback = new Feedback(feedbackUser.getId(), feedbackDto.getDate(), feedbackDto.getText(),
                 feedbackUser.getName(), feedbackDto.getRating(), feedbackUser.getAvatar());
         feedbackService.save(feedback);
+
+        User user = usersService.findById(userId);
         user.getFeedbacks().add(feedback);
         usersService.countRanking(user);
         usersService.save(user);
@@ -226,7 +227,7 @@ public class UsersController {
         User user = usersService.findById(userId);
         Cat cat = catsService.findById(catId);
         user.getCats().remove(cat);
-        feedbackService.deleteById(catId);
+        catsService.deleteById(catId);
         usersService.save(user);
     }
 
@@ -262,7 +263,6 @@ public class UsersController {
         User user = usersService.findById(userId);
         Cat cat = catsService.findById(catId);
         user.getFavorites().remove(cat);
-        feedbackService.deleteById(catId);
         usersService.save(user);
     }
 }

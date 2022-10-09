@@ -5,6 +5,7 @@ import edu.schoo21.openprojectback.models.Cat;
 import edu.schoo21.openprojectback.models.dto.CatDto;
 import edu.schoo21.openprojectback.models.response.CatProfileResponse;
 import edu.schoo21.openprojectback.requests.CatSearchRequest;
+import edu.schoo21.openprojectback.requests.SearchRequest;
 import edu.schoo21.openprojectback.services.AvatarService;
 import edu.schoo21.openprojectback.services.CatsService;
 import edu.schoo21.openprojectback.specification.CatSpecifications;
@@ -52,6 +53,15 @@ public class CatController {
                 .and(CatSpecifications.equalCertificates(searchRequest.getCertificates()))
                 .and(CatSpecifications.priceFrom(searchRequest.getPriceFrom()))
                 .and(CatSpecifications.priceTo(searchRequest.getPriceTo()));
+        return catsService.findAll(specs).stream().map(CatProfileResponse::new).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @PostMapping("/filter")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<CatProfileResponse> filterCats(@RequestBody SearchRequest searchRequest) {
+        Specification<Cat> specs = Specification
+                .where(CatSpecifications.likeAddress(searchRequest.getSearch()))
+                .or(CatSpecifications.likeBreed(searchRequest.getSearch()));
         return catsService.findAll(specs).stream().map(CatProfileResponse::new).collect(Collectors.toCollection(ArrayList::new));
     }
 
