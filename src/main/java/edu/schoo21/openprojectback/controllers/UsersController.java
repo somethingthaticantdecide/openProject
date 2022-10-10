@@ -114,6 +114,14 @@ public class UsersController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping(value = "/{user-id}/clearAvatar")
+    public ResponseEntity<?> clearAvatar(@PathVariable("user-id") Long id) {
+        User user = usersService.findById(id);
+        user.setAvatar(null);
+        usersService.save(user);
+        return ResponseEntity.ok().build();
+    }
+
     /////////////////////////
 
     @GetMapping("/{user-id}/feedbacks")
