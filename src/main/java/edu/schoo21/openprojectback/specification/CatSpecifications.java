@@ -14,6 +14,14 @@ public class CatSpecifications {
         return breed == null ? null : ((root, query, cb) -> cb.like(root.get(Cat_.BREED), "%" + breed + "%"));
     }
 
+    public static Specification<Cat> likeInfo(String info) {
+        return info == null ? null : ((root, query, cb) -> cb.like(root.get(Cat_.INFO), "%" + info + "%"));
+    }
+
+    public static Specification<Cat> likeName(String name) {
+        return name == null ? null : ((root, query, cb) -> cb.like(root.get(Cat_.NAME), "%" + name + "%"));
+    }
+
     public static Specification<Cat> equalAge(Integer age) {
         return age == null ? null : ((root, query, cb) -> cb.equal(root.get(Cat_.AGE), age));
     }

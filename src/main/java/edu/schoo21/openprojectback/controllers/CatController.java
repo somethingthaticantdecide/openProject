@@ -61,7 +61,9 @@ public class CatController {
     public Collection<CatProfileResponse> filterCats(@RequestBody SearchRequest searchRequest) {
         Specification<Cat> specs = Specification
                 .where(CatSpecifications.likeAddress(searchRequest.getSearch()))
-                .or(CatSpecifications.likeBreed(searchRequest.getSearch()));
+                .or(CatSpecifications.likeBreed(searchRequest.getSearch()))
+                .or(CatSpecifications.likeInfo(searchRequest.getSearch()))
+                .or(CatSpecifications.likeName(searchRequest.getSearch()));
         return catsService.findAll(specs).stream().map(CatProfileResponse::new).collect(Collectors.toCollection(ArrayList::new));
     }
 
