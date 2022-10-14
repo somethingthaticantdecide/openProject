@@ -40,7 +40,7 @@ public class User implements UserDetails {
     @OneToMany
     @ToString.Exclude
     private List<Cat> cats;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @ToString.Exclude
     private List<Cat> favorites;
 
