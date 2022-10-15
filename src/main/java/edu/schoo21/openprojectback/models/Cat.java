@@ -26,6 +26,7 @@ public class Cat {
     private Boolean passport;
     private Boolean vaccination;
     private Boolean certificates;
+    @Column(columnDefinition="text")
     private String info;
     private String photo;
     private String address;

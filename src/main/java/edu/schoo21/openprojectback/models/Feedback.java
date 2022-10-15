@@ -19,6 +19,7 @@ public class Feedback {
     private Long id;
     private Long user_id;
     private Date date;
+    @Column(columnDefinition="text")
     private String text;
     private String name;
     private String avatar;
