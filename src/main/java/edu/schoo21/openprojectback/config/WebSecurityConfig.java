@@ -48,17 +48,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.csrf().disable()
 				// dont authenticate this particular request
 				.authorizeRequests()
-				.antMatchers("/authenticate").permitAll()
-				.antMatchers("/signUp").permitAll()
-				.antMatchers("/restore").permitAll()
-				.antMatchers("/new_password").permitAll()
-				.antMatchers("/avatars/**").permitAll()
+				.antMatchers("/", "/authenticate", "/signUp", "/restore", "/new_password", "/avatars/**",
+						"/swagger-ui/**", "/explorer/**", "/v3/api-docs/**", "/").permitAll()
 				// all other requests need to be authenticated
-				.anyRequest().authenticated().and()
+				.anyRequest().authenticated()
+				.and()
 				// make sure we use stateless session; session won't be used to
 				// store user's state.
-				.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+				.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+				.and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 		// Add a filter to validate the tokens with every request
 		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
