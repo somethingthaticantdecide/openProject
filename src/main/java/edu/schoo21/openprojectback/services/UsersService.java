@@ -33,6 +33,10 @@ public class UsersService implements UserDetailsService {
         return userRepository.findUserByLogin(name);
     }
 
+    public User findByMail(String mail) {
+        return userRepository.findUserByMail(mail);
+    }
+
     public User addNewUser(UserDto userDto) {
         User user = userRepository.findUserByLogin(userDto.getLogin());
         if (user == null) {
@@ -46,7 +50,7 @@ public class UsersService implements UserDetailsService {
         userRepository.saveAndFlush(user);
     }
 
-    public User updateUser(User user, UserDto userDto) {
+    public void updateUser(User user, UserDto userDto) {
         if (userDto.getLogin() != null) user.setLogin(userDto.getLogin());
         if (userDto.getPassword() != null) user.setPassword(userDto.getPassword());
         if (userDto.getName() != null) user.setName(userDto.getName());
@@ -54,7 +58,7 @@ public class UsersService implements UserDetailsService {
         if (userDto.getMail() != null) user.setMail(userDto.getMail());
         if (userDto.getAddress() != null) user.setAddress(userDto.getAddress());
         if (userDto.getRanking() != null) user.setRanking(userDto.getRanking());
-        return userRepository.saveAndFlush(user);
+        userRepository.saveAndFlush(user);
     }
 
     public void deleteById(Long id) {
