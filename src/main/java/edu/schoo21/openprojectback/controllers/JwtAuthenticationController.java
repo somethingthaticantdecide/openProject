@@ -3,13 +3,16 @@ package edu.schoo21.openprojectback.controllers;
 import java.io.IOException;
 import java.util.Objects;
 
+import com.sun.mail.smtp.SMTPAddressFailedException;
 import edu.schoo21.openprojectback.config.JwtTokenUtil;
 import edu.schoo21.openprojectback.models.JwtRequest;
 import edu.schoo21.openprojectback.models.JwtResponse;
 import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.models.dto.UserDto;
+import edu.schoo21.openprojectback.models.requests.RestoreRequest;
 import edu.schoo21.openprojectback.services.AvatarService;
 import edu.schoo21.openprojectback.services.UsersService;
+import edu.schoo21.openprojectback.services.VerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +32,7 @@ public class JwtAuthenticationController {
 	private final JwtTokenUtil jwtTokenUtil;
 	private final UsersService usersService;
 	private final PasswordEncoder passwordEncoder;
+	private final VerificationService verificationService;
 
 	private void authenticate(String username, String password) throws Exception {
 		Objects.requireNonNull(username);
@@ -61,4 +65,17 @@ public class JwtAuthenticationController {
 		return ResponseEntity.ok(new JwtResponse(token, user));
 	}
 
+	@PostMapping(value = "/restore")
+	public ResponseEntity<?> restorePassword(@RequestBody RestoreRequest mail) {
+		User user = usersService.findByMail(mail.getMail());
+		if (user == null) {
+			return ResponseEntity.badRequest().body("Cannot find user with this email!");
+		}
+		try {
+			verificationService.sendVerificationEmail(user);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("Something went wrong!");
+		}
+		return ResponseEntity.ok().build();
+	}
 }

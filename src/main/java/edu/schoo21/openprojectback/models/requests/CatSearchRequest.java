@@ -1,4 +1,4 @@
-package edu.schoo21.openprojectback.requests;
+package edu.schoo21.openprojectback.models.requests;
 
 import lombok.Data;
 

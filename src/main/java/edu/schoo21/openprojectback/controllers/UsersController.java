@@ -6,7 +6,7 @@ import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.models.dto.CatDto;
 import edu.schoo21.openprojectback.models.dto.FeedbackDto;
 import edu.schoo21.openprojectback.models.dto.UserDto;
-import edu.schoo21.openprojectback.requests.IdRequest;
+import edu.schoo21.openprojectback.models.requests.IdRequest;
 import edu.schoo21.openprojectback.services.AvatarService;
 import edu.schoo21.openprojectback.services.CatsService;
 import edu.schoo21.openprojectback.services.FeedbackService;
@@ -185,13 +185,15 @@ public class UsersController {
 
     @PostMapping("/{user-id}/favourites")
     @ResponseStatus(HttpStatus.CREATED)
-    public Cat addFavouritesCatByIdToUser(@RequestBody IdRequest idRequest, @PathVariable("user-id") Long userId) {
+    public ResponseEntity<Cat> addFavouritesCatByIdToUser(@RequestBody IdRequest idRequest, @PathVariable("user-id") Long userId) {
         User user = usersService.findById(userId);
         Cat cat = catsService.findById(idRequest.getId());
-
-        user.getFavorites().add(cat);
-        usersService.save(user);
-        return cat;
+        if (!user.getFavorites().contains(cat)) {
+            user.getFavorites().add(cat);
+            usersService.save(user);
+            return ResponseEntity.ok(cat);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{user-id}/favourites/{cat-id}")

@@ -34,7 +34,7 @@ public class UsersService implements UserDetailsService {
     }
 
     public User findByMail(String mail) {
-        return userRepository.findUserByMail(mail);
+        return userRepository.findFirstByMail(mail);
     }
 
     public User addNewUser(UserDto userDto) {
