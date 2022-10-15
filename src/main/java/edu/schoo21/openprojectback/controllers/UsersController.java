@@ -58,20 +58,20 @@ public class UsersController {
         return null;
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addNewUser(UserDto userDto, @RequestParam("file") MultipartFile file) {
-        if (usersService.findUserByLogin(userDto.getLogin()) != null)
-            return ResponseEntity.badRequest().body("User with this login already exist!");
-        User user = usersService.addNewUser(userDto);
-        try {
-            user.setAvatar(avatarService.saveImageToBase(file));
-            usersService.save(user);
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok(user);
-    }
+//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ResponseEntity<?> addNewUser(UserDto userDto, @RequestParam("file") MultipartFile file) {
+//        if (usersService.findUserByLogin(userDto.getLogin()) != null)
+//            return ResponseEntity.badRequest().body("User with this login already exist!");
+//        User user = usersService.addNewUser(userDto);
+//        try {
+//            user.setAvatar(avatarService.saveImageToBase(file));
+//            usersService.save(user);
+//        } catch (IOException e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        return ResponseEntity.ok(user);
+//    }
 
     @PutMapping(value ="/{user-id}")
     @ResponseStatus(HttpStatus.OK)
