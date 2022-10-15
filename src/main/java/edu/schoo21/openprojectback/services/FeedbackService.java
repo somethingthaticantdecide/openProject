@@ -2,6 +2,7 @@ package edu.schoo21.openprojectback.services;
 
 import edu.schoo21.openprojectback.exceptions.NotFoundException;
 import edu.schoo21.openprojectback.models.Feedback;
+import edu.schoo21.openprojectback.models.User;
 import edu.schoo21.openprojectback.models.dto.FeedbackDto;
 import edu.schoo21.openprojectback.repository.FeedbackRepository;
 import edu.schoo21.openprojectback.repository.UserRepository;
@@ -53,5 +54,12 @@ public class FeedbackService {
 
     public Collection<Feedback> findAll() {
         return feedbackRepository.findAll();
+    }
+
+    public void updateOwnerData(Feedback feedback) {
+        User user = userRepository.findById(feedback.getUser_id()).orElseThrow(NotFoundException::new);
+        feedback.setAvatar(user.getAvatar());
+        feedback.setName(user.getName());
+        feedbackRepository.save(feedback);
     }
 }

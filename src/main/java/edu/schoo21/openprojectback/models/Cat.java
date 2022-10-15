@@ -5,6 +5,7 @@ import edu.schoo21.openprojectback.models.dto.CatDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -59,5 +60,18 @@ public class Cat {
         this.certificates = certificates;
         this.info = info;
         this.photo = photo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cat cat = (Cat) o;
+        return Objects.equals(id, cat.id) && Objects.equals(name, cat.name) && Objects.equals(sex, cat.sex) && Objects.equals(breed, cat.breed) && Objects.equals(age, cat.age) && Objects.equals(price, cat.price) && Objects.equals(passport, cat.passport) && Objects.equals(vaccination, cat.vaccination) && Objects.equals(certificates, cat.certificates) && Objects.equals(info, cat.info) && Objects.equals(photo, cat.photo) && Objects.equals(address, cat.address);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, sex, breed, age, price, passport, vaccination, certificates, info, photo, address);
     }
 }
